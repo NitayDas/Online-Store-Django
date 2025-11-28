@@ -1,6 +1,41 @@
 from rest_framework import serializers
 from .models import*
 import json
+from django.contrib.auth import get_user_model
+
+
+
+
+
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(write_only=True)
+    
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'profile_picture', 'email', 'password', 'confirm_password', 'phone')
+
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Password doesn't match")
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('confirm_password')
+        User = get_user_model()
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            email=validated_data['email'],
+            phone=validated_data.get('phone')  # Assign phone field
+        )
+        if 'profile_picture' in validated_data:
+            user.profile_picture = validated_data['profile_picture']
+        user.is_approved = False
+        user.save()
+        return user
+
+
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

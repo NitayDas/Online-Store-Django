@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-bnx*@=23$lp__ymj^*)x-s_ekylgf=tzs(6cxkh^5kkp(i=j5k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.0', 'social.utshabtech.com.bd', 'www.social.utshabtech.com.bd']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -106,20 +106,14 @@ TEMPLATES = [
 
 # REST Framework configuration
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
-
-
-AUTHENTICATION_BACKENDS = [
-    'authentication.backends.EmailBackend', 
-    'django.contrib.auth.backends.ModelBackend',  
-]
 
 
 

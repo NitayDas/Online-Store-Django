@@ -2,114 +2,112 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useUser } from "../../Provider/UserProvider";
+import { FaUserCircle } from "react-icons/fa";
 
 const HomeNavbar = () => {
   const { user, signOut } = useUser();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Top-right links
-  const navLinks = [
-    { to: "/", label: "Home" },
-    ...(user
-      ? [
-          { to: "/dashboard", label: "Dashboard" },
-          {
-            to: "/",
-            label: "Sign Out",
-            onClick: () => {
-              signOut();
-              navigate("/login");
-            },
-          },
-        ]
-      : [{ to: "/login", label: "Login" }]),
-  ];
-
-  // Main navigation
   const mainNav = [
-    { title: "Products", link: "/products" },
+    { title: "Products", link: "/" },
     { title: "About", link: "/about" },
     { title: "Contact", link: "/contact" },
     { title: "Cart", link: "/cart" },
   ];
 
   return (
-    <div className="w-full shadow">
-      {/* Top links */}
+    <nav className="w-full shadow-md">
+      {/* Top bar */}
       <div className="bg-green-700 text-white text-sm px-4 py-1 flex justify-end gap-4">
-        {navLinks.map((link) =>
-          link.onClick ? (
+        {user ? (
+          <div className="relative">
             <button
-              key={link.label}
-              onClick={link.onClick}
-              className="hover:underline"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-1 hover:text-yellow-300 transition"
             >
-              {link.label}
+              <FaUserCircle className="text-lg" />
+              {user.username || "User"}
             </button>
-          ) : (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              className={({ isActive }) =>
-                `hover:underline ${isActive ? "font-bold underline text-yellow-300" : ""}`
-              }
-            >
-              {link.label}
-            </NavLink>
-          )
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-36 bg-white text-green-800 rounded shadow-lg z-20">
+                <button
+                  onClick={() => {
+                    signOut();
+                    navigate("/");
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-green-100 rounded"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <NavLink
+            to="/login"
+            className={({ isActive }) =>
+              `hover:underline ${isActive ? "font-bold underline text-yellow-300" : ""}`
+            }
+          >
+            Login
+          </NavLink>
         )}
       </div>
 
-      {/* Logo / Brand */}
-      <div className="bg-white py-2 px-4 shadow-sm">
+      {/* Brand */}
+      <div className="bg-white py-3 px-4 shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold text-green-800">Online Store</h1>
+          {/* Desktop nav */}
+          <div className="hidden lg:flex gap-4">
+            {mainNav.map(({ title, link }) => (
+              <NavLink
+                key={title}
+                to={link}
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded-md font-semibold transition-colors ${
+                    isActive
+                      ? "bg-green-800 text-yellow-300"
+                      : "hover:bg-green-100 hover:text-green-800"
+                  }`
+                }
+              >
+                {title}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="lg:hidden text-green-700 font-semibold"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? "Close" : "Menu"}
+          </button>
         </div>
       </div>
 
-      {/* Main nav tiles */}
-      <div className="bg-green-600 text-white grid grid-cols-2 md:grid-cols-4 text-center">
-        {mainNav.map(({ title, link }) => (
-          <NavLink
-            key={title}
-            to={link}
-            className={({ isActive }) =>
-              `px-3 py-4 border border-white transition-all ${
-                isActive ? "bg-green-800" : "hover:bg-green-700"
-              }`
-            }
-          >
-            <p className="font-semibold">{title}</p>
-          </NavLink>
-        ))}
-      </div>
-
       {/* Mobile menu */}
-      <div className="lg:hidden px-4 py-2">
-        <button
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="text-green-700 font-semibold"
-        >
-          {isDropdownOpen ? "Close Menu" : "Menu"}
-        </button>
-        {isDropdownOpen && (
-          <ul className="mt-2 bg-white shadow px-4 py-2 rounded space-y-2">
-            {mainNav.map((item) => (
-              <li key={item.title}>
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white shadow-md">
+          <ul className="flex flex-col space-y-2 px-4 py-2">
+            {mainNav.map(({ title, link }) => (
+              <li key={title}>
                 <NavLink
-                  to={item.link}
-                  onClick={() => setIsDropdownOpen(false)}
-                  className="block py-1 hover:text-green-700"
+                  to={link}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block py-2 px-2 rounded hover:bg-green-100 hover:text-green-800 transition"
                 >
-                  {item.title}
+                  {title}
                 </NavLink>
               </li>
             ))}
           </ul>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </nav>
   );
 };
 

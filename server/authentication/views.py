@@ -3,8 +3,9 @@ from rest_framework import status, viewsets
 from .models import*
 from .serializers import*
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import BasePermission
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
@@ -14,6 +15,26 @@ User=get_user_model()
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'superuser'
+
+
+
+
+class UserRegistrationView(ListCreateAPIView):
+    permission_classes = [AllowAny]
+
+    queryset = User.objects.all()  # Replace `User` with your model name
+    serializer_class = UserRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("Received data:", request.data)  # Log received data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(
+            {"message": "Registration successful"},
+            status=status.HTTP_201_CREATED
+        )
+
 
 
 

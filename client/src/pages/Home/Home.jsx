@@ -5,25 +5,28 @@ import EditModal from "./EditModal";
 import DeleteModal from "./deleteModal";
 import { useUser } from "../../Provider/UserProvider";
 
-
-
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [category, setCategory] = useState("all");
   const { user } = useUser();
 
-  const fetchProducts = () => {
-    AxiosInstance.get("products/")
+  const fetchProducts = (category = null) => {
+    let url = "products/";
+    if (category && category !== "all") {
+      url += `?category=${encodeURIComponent(category)}`;
+    }
+    AxiosInstance.get(url)
       .then((res) => setProducts(res.data))
       .catch((err) => console.error(err));
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts(category);
+  }, [category]);
 
   const openDetails = (product) => {
     setSelectedProduct(product);
@@ -44,14 +47,28 @@ export default function Home() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Products</h1>
-        {user?.is_superuser && (
-          <button
-            onClick={() => openEdit(null)} // null indicates adding new product
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+        <div className="flex gap-2">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border rounded px-2 py-1"
           >
-            Add New Product
-          </button>
-        )}
+            <option value="all">All</option>
+            <option value="men's clothing">Men's Clothing</option>
+            <option value="women's clothing">Women's Clothing</option>
+            <option value="jewelery">Jewelery</option>
+            <option value="electronics">Electronics</option>
+          </select>
+
+          {user?.is_superuser && (
+            <button
+              onClick={() => openEdit(null)}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+            >
+              Add New Product
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -110,15 +127,14 @@ export default function Home() {
         onClose={() => {
           setIsEditOpen(false);
           setSelectedProduct(null);
-          fetchProducts();
+          fetchProducts(category);
         }}
       />
-
       <DeleteModal
         product={selectedProduct}
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        onDeleteSuccess={fetchProducts}
+        onDeleteSuccess={() => fetchProducts(category)}
       />
     </div>
   );
