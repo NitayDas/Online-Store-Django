@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-bnx*@=23$lp__ymj^*)x-s_ekylgf=tzs(6cxkh^5kkp(i=j5k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.0', 'fakestore.utshabtech.com.bd', 'www.fakestore.utshabtech.com.bd']
 
 
 # Application definition
@@ -55,10 +55,10 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://social.utshabtech.com.bd",
-    "https://social.utshabtech.com.bd",
-    "http://www.social.utshabtech.com.bd",
-    "https://www.social.utshabtech.com.bd",
+    "http://fakestore.utshabtech.com.bd",
+    "https://fakestore.utshabtech.com.bd",
+    "http://www.fakestore.utshabtech.com.bd",
+    "https://www.fakestore.utshabtech.com.bd",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -67,10 +67,10 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173", 
     "http://127.0.0.1",
-    "https://social.utshabtech.com.bd",
-    "http://social.utshabtech.com.bd",
-    "https://www.social.utshabtech.com.bd",
-    "http://www.social.utshabtech.com.bd",
+    "https://fakestore.utshabtech.com.bd",
+    "http://fakestore.utshabtech.com.bd",
+    "https://www.fakestore.utshabtech.com.bd",
+    "http://www.fakestore.utshabtech.com.bd",
 ]
 
 
